@@ -1,177 +1,113 @@
-#include <stdio.h>
-#include <stdlib.h>
 
-#define MAX_CARTAS 32
+   #include <stdio.h>
+#include <string.h>
 
 typedef struct {
-    char codigo[4]; // Ex: A01
-    char estado;    // Letra do estado
-    int numeroCidade; 
+    char codigo[4];
+    char estado;
+    int numeroCidade;
     char nomeEstado[20];
     char nomeCidade[20];
     int populacao;
     float area;
     float pib;
     int pontosTuristicos;
+    float densidadePopulacional;
+    float pibPerCapita;
 } Carta;
 
-// Função para obter nome do estado pelo código
-void getNomeEstado(char estado, char *nomeEstado) {
-    switch (estado) {
-        case 'A': case 'a': strcpy(nomeEstado, "Andária"); break;
-        case 'B': case 'b': strcpy(nomeEstado, "Boreália"); break;
-        case 'C': case 'c': strcpy(nomeEstado, "Cantarina"); break;
-        case 'D': case 'd': strcpy(nomeEstado, "Dorávia"); break;
-        case 'E': case 'e': strcpy(nomeEstado, "Estrelândia"); break;
-        case 'F': case 'f': strcpy(nomeEstado, "Florânia"); break;
-        case 'G': case 'g': strcpy(nomeEstado, "Granaluz"); break;
-        case 'H': case 'h': strcpy(nomeEstado, "Horizônia"); break;
-        default: strcpy(nomeEstado, "Desconhecido"); break;
-    }
+// Arrays fixos de nomes para estados e cidades, indexados para evitar if/switch
+const char *estados[8] = {
+    "Andária", "Boreália", "Cantarina", "Dorávia",
+    "Estrelândia", "Florânia", "Granaluz", "Horizônia"
+};
+
+const char *cidades[8][4] = {
+    {"Solária", "Ventúria", "Lunária", "Bravona"},
+    {"Invernia", "Nevaluz", "Ártica", "Gelária"},
+    {"Melódia", "Harmonia", "Rítmica", "Coralina"},
+    {"Montávia", "Pedrúnia", "Rochaluz", "Valedouro"},
+    {"Luminara", "Brilúnia", "Noctúria", "Claravida"},
+    {"Rosávia", "Jardoluz", "Primavela", "Botânia"},
+    {"Verdelago", "Campoleiro", "Pastália", "Plantávia"},
+    {"Solnascente", "Claravento", "Alvoraluz", "Céudouro"}
+};
+
+// Função para obter índice do estado (A-H)
+int indiceEstado(char estado) {
+    return estado - 'A';
 }
 
-// Função para obter nome da cidade pelo estado e número
-void getNomeCidade(char estado, int numCidade, char *nomeCidade) {
-    switch (estado) {
-        case 'A': case 'a':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Solária"); break;
-                case 2: strcpy(nomeCidade, "Ventúria"); break;
-                case 3: strcpy(nomeCidade, "Lunária"); break;
-                case 4: strcpy(nomeCidade, "Bravona"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'B': case 'b':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Invernia"); break;
-                case 2: strcpy(nomeCidade, "Nevaluz"); break;
-                case 3: strcpy(nomeCidade, "Ártica"); break;
-                case 4: strcpy(nomeCidade, "Gelária"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'C': case 'c':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Melódia"); break;
-                case 2: strcpy(nomeCidade, "Harmonia"); break;
-                case 3: strcpy(nomeCidade, "Rítmica"); break;
-                case 4: strcpy(nomeCidade, "Coralina"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'D': case 'd':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Montávia"); break;
-                case 2: strcpy(nomeCidade, "Pedrúnia"); break;
-                case 3: strcpy(nomeCidade, "Rochaluz"); break;
-                case 4: strcpy(nomeCidade, "Valedouro"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'E': case 'e':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Luminara"); break;
-                case 2: strcpy(nomeCidade, "Brilúnia"); break;
-                case 3: strcpy(nomeCidade, "Noctúria"); break;
-                case 4: strcpy(nomeCidade, "Claravida"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'F': case 'f':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Rosávia"); break;
-                case 2: strcpy(nomeCidade, "Jardoluz"); break;
-                case 3: strcpy(nomeCidade, "Primavela"); break;
-                case 4: strcpy(nomeCidade, "Botânia"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'G': case 'g':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Verdelago"); break;
-                case 2: strcpy(nomeCidade, "Campoleiro"); break;
-                case 3: strcpy(nomeCidade, "Pastália"); break;
-                case 4: strcpy(nomeCidade, "Plantávia"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        case 'H': case 'h':
-            switch (numCidade) {
-                case 1: strcpy(nomeCidade, "Solnascente"); break;
-                case 2: strcpy(nomeCidade, "Claravento"); break;
-                case 3: strcpy(nomeCidade, "Alvoraluz"); break;
-                case 4: strcpy(nomeCidade, "Céudouro"); break;
-                default: strcpy(nomeCidade, "Desconhecida"); break;
-            }
-            break;
-        default:
-            strcpy(nomeCidade, "Desconhecida");
-            break;
-    }
+void preencherCarta(Carta *carta) {
+    int idxEstado = indiceEstado(carta->estado);
+    int idxCidade = carta->numeroCidade - 1;
+
+    strcpy(carta->nomeEstado, estados[idxEstado]);
+    strcpy(carta->nomeCidade, cidades[idxEstado][idxCidade]);
+
+    snprintf(carta->codigo, sizeof(carta->codigo), "%c%02d", carta->estado, carta->numeroCidade);
+
+    // Cálculos
+    carta->densidadePopulacional = carta->populacao / carta->area;
+    carta->pibPerCapita = (carta->pib * 1e9) / carta->populacao; // PIB em bilhões, converte para reais antes
 }
 
-void exibirCarta(Carta c) {
-    printf("Código da Carta: %s\n", c.codigo);
-    printf("Estado: %s (%c)\n", c.nomeEstado, c.estado);
-    printf("Cidade: %s (%d)\n", c.nomeCidade, c.numeroCidade);
-    printf("População: %d habitantes\n", c.populacao);
-    printf("Área: %.2f km²\n", c.area);
-    printf("PIB: R$ %.2f bilhões\n", c.pib);
-    printf("Pontos Turísticos: %d\n", c.pontosTuristicos);
-    printf("---------------------------------\n");
+void exibirCarta(Carta carta, int numCarta) {
+    printf("Carta %d:\n", numCarta);
+    printf("Estado: %c\n", carta.estado);
+    printf("Código: %s\n", carta.codigo);
+    printf("Nome da Cidade: %s\n", carta.nomeCidade);
+    printf("População: %d\n", carta.populacao);
+    printf("Área: %.2f km²\n", carta.area);
+    printf("PIB: %.2f bilhões de reais\n", carta.pib);
+    printf("Número de Pontos Turísticos: %d\n", carta.pontosTuristicos);
+    printf("Densidade Populacional: %.2f hab/km²\n", carta.densidadePopulacional);
+    printf("PIB per Capita: %.2f reais\n\n", carta.pibPerCapita);
 }
 
 int main() {
-    Carta cartas[MAX_CARTAS];
-    int total = 0;
-    char continuar;
+    Carta cartas[2];
 
-    printf("=== Cadastro de Cidades - Super Trunfo: Países ===\n");
+    printf("=== Cadastro de 2 Cidades - Super Trunfo: Países ===\n");
 
-    do {
-        if (total >= MAX_CARTAS) {
-            printf("Limite máximo de cartas atingido!\n");
-            break;
-        }
+    // Entrada carta 1
+    printf("\nCarta 1\n");
+    printf("Informe o Estado (A-H): ");
+    scanf(" %c", &cartas[0].estado);
+    printf("Informe o número da cidade (1-4): ");
+    scanf("%d", &cartas[0].numeroCidade);
+    printf("População: ");
+    scanf("%d", &cartas[0].populacao);
+    printf("Área (km²): ");
+    scanf("%f", &cartas[0].area);
+    printf("PIB (bilhões de reais): ");
+    scanf("%f", &cartas[0].pib);
+    printf("Número de pontos turísticos: ");
+    scanf("%d", &cartas[0].pontosTuristicos);
 
-        printf("\n--- Carta %d ---\n", total + 1);
-        printf("Informe o Estado (A-H): ");
-        scanf(" %c", &cartas[total].estado);
+    preencherCarta(&cartas[0]);
 
-        printf("Informe o número da cidade (1-4): ");
-        scanf("%d", &cartas[total].numeroCidade);
+    // Entrada carta 2
+    printf("\nCarta 2\n");
+    printf("Informe o Estado (A-H): ");
+    scanf(" %c", &cartas[1].estado);
+    printf("Informe o número da cidade (1-4): ");
+    scanf("%d", &cartas[1].numeroCidade);
+    printf("População: ");
+    scanf("%d", &cartas[1].populacao);
+    printf("Área (km²): ");
+    scanf("%f", &cartas[1].area);
+    printf("PIB (bilhões de reais): ");
+    scanf("%f", &cartas[1].pib);
+    printf("Número de pontos turísticos: ");
+    scanf("%d", &cartas[1].pontosTuristicos);
 
-        // Gerar código da carta
-        snprintf(cartas[total].codigo, sizeof(cartas[total].codigo), "%c%02d", cartas[total].estado, cartas[total].numeroCidade);
+    preencherCarta(&cartas[1]);
 
-        // Obter nomes
-        getNomeEstado(cartas[total].estado, cartas[total].nomeEstado);
-        getNomeCidade(cartas[total].estado, cartas[total].numeroCidade, cartas[total].nomeCidade);
-
-        printf("População: ");
-        scanf("%d", &cartas[total].populacao);
-
-        printf("Área (em km²): ");
-        scanf("%f", &cartas[total].area);
-
-        printf("PIB (em bilhões de R$): ");
-        scanf("%f", &cartas[total].pib);
-
-        printf("Número de pontos turísticos: ");
-        scanf("%d", &cartas[total].pontosTuristicos);
-
-        total++;
-
-        printf("Deseja cadastrar outra carta? (S/N): ");
-        scanf(" %c", &continuar);
-
-    } while (continuar == 'S' || continuar == 's');
-
-    printf("\n=== Cartas Cadastradas ===\n");
-    for (int i = 0; i < total; i++) {
-        exibirCarta(cartas[i]);
-    }
+    // Exibir resultados
+    printf("\n=== Resultados ===\n");
+    exibirCarta(cartas[0], 1);
+    exibirCarta(cartas[1], 2);
 
     return 0;
 }
