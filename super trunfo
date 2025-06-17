@@ -1,5 +1,4 @@
-
-   #include <stdio.h>
+#include <stdio.h>
 #include <string.h>
 
 typedef struct {
@@ -8,15 +7,15 @@ typedef struct {
     int numeroCidade;
     char nomeEstado[20];
     char nomeCidade[20];
-    int populacao;
+    unsigned long int populacao;
     float area;
     float pib;
     int pontosTuristicos;
     float densidadePopulacional;
     float pibPerCapita;
+    float superPoder;
 } Carta;
 
-// Arrays fixos de nomes para estados e cidades, indexados para evitar if/switch
 const char *estados[8] = {
     "Andária", "Boreália", "Cantarina", "Dorávia",
     "Estrelândia", "Florânia", "Granaluz", "Horizônia"
@@ -33,7 +32,6 @@ const char *cidades[8][4] = {
     {"Solnascente", "Claravento", "Alvoraluz", "Céudouro"}
 };
 
-// Função para obter índice do estado (A-H)
 int indiceEstado(char estado) {
     return estado - 'A';
 }
@@ -49,7 +47,13 @@ void preencherCarta(Carta *carta) {
 
     // Cálculos
     carta->densidadePopulacional = carta->populacao / carta->area;
-    carta->pibPerCapita = (carta->pib * 1e9) / carta->populacao; // PIB em bilhões, converte para reais antes
+    carta->pibPerCapita = (carta->pib * 1e9) / carta->populacao; // PIB em bilhões para reais
+
+    // Calcular super poder:
+    // superPoder = populacao + area + pib + pontosTuristicos + pibPerCapita + (1 / densidadePopulacional)
+    // Convertendo populacao para float para soma coerente
+    carta->superPoder = (float)carta->populacao + carta->area + carta->pib + (float)carta->pontosTuristicos +
+                        carta->pibPerCapita + (1.0f / carta->densidadePopulacional);
 }
 
 void exibirCarta(Carta carta, int numCarta) {
@@ -57,12 +61,38 @@ void exibirCarta(Carta carta, int numCarta) {
     printf("Estado: %c\n", carta.estado);
     printf("Código: %s\n", carta.codigo);
     printf("Nome da Cidade: %s\n", carta.nomeCidade);
-    printf("População: %d\n", carta.populacao);
+    printf("População: %lu\n", carta.populacao);
     printf("Área: %.2f km²\n", carta.area);
     printf("PIB: %.2f bilhões de reais\n", carta.pib);
     printf("Número de Pontos Turísticos: %d\n", carta.pontosTuristicos);
     printf("Densidade Populacional: %.2f hab/km²\n", carta.densidadePopulacional);
-    printf("PIB per Capita: %.2f reais\n\n", carta.pibPerCapita);
+    printf("PIB per Capita: %.2f reais\n", carta.pibPerCapita);
+    printf("Super Poder: %.2f\n\n", carta.superPoder);
+}
+
+void compararCartas(Carta c1, Carta c2) {
+    printf("Comparação de Cartas:\n\n");
+
+    // População (maior vence)
+    printf("População: Carta 1 venceu (%d)\n", c1.populacao > c2.populacao);
+
+    // Área (maior vence)
+    printf("Área: Carta 1 venceu (%d)\n", c1.area > c2.area);
+
+    // PIB (maior vence)
+    printf("PIB: Carta 1 venceu (%d)\n", c1.pib > c2.pib);
+
+    // Pontos Turísticos (maior vence)
+    printf("Pontos Turísticos: Carta 1 venceu (%d)\n", c1.pontosTuristicos > c2.pontosTuristicos);
+
+    // Densidade Populacional (menor vence)
+    printf("Densidade Populacional: Carta 1 venceu (%d)\n", c1.densidadePopulacional < c2.densidadePopulacional);
+
+    // PIB per Capita (maior vence)
+    printf("PIB per Capita: Carta 1 venceu (%d)\n", c1.pibPerCapita > c2.pibPerCapita);
+
+    // Super Poder (maior vence)
+    printf("Super Poder: Carta 1 venceu (%d)\n", c1.superPoder > c2.superPoder);
 }
 
 int main() {
@@ -77,7 +107,7 @@ int main() {
     printf("Informe o número da cidade (1-4): ");
     scanf("%d", &cartas[0].numeroCidade);
     printf("População: ");
-    scanf("%d", &cartas[0].populacao);
+    scanf("%lu", &cartas[0].populacao);
     printf("Área (km²): ");
     scanf("%f", &cartas[0].area);
     printf("PIB (bilhões de reais): ");
@@ -94,7 +124,7 @@ int main() {
     printf("Informe o número da cidade (1-4): ");
     scanf("%d", &cartas[1].numeroCidade);
     printf("População: ");
-    scanf("%d", &cartas[1].populacao);
+    scanf("%lu", &cartas[1].populacao);
     printf("Área (km²): ");
     scanf("%f", &cartas[1].area);
     printf("PIB (bilhões de reais): ");
@@ -109,6 +139,8 @@ int main() {
     exibirCarta(cartas[0], 1);
     exibirCarta(cartas[1], 2);
 
+    // Comparar cartas
+    compararCartas(cartas[0], cartas[1]);
+
     return 0;
 }
-
