@@ -1,91 +1,177 @@
 #include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_CARTAS 32
 
 typedef struct {
-    char estado[50];
-    int codigo;
-    char nome[50];
-    unsigned long int populacao;
+    char codigo[4]; // Ex: A01
+    char estado;    // Letra do estado
+    int numeroCidade; 
+    char nomeEstado[20];
+    char nomeCidade[20];
+    int populacao;
     float area;
-    double pib;
-    int pontos_turisticos;
-    float densidade_populacional;
-    float pib_per_capita;
-    float super_poder;
+    float pib;
+    int pontosTuristicos;
 } Carta;
 
-// Função para calcular densidade populacional
-float calcular_densidade(unsigned long int pop, float area) {
-    return pop / area;
+// Função para obter nome do estado pelo código
+void getNomeEstado(char estado, char *nomeEstado) {
+    switch (estado) {
+        case 'A': case 'a': strcpy(nomeEstado, "Andária"); break;
+        case 'B': case 'b': strcpy(nomeEstado, "Boreália"); break;
+        case 'C': case 'c': strcpy(nomeEstado, "Cantarina"); break;
+        case 'D': case 'd': strcpy(nomeEstado, "Dorávia"); break;
+        case 'E': case 'e': strcpy(nomeEstado, "Estrelândia"); break;
+        case 'F': case 'f': strcpy(nomeEstado, "Florânia"); break;
+        case 'G': case 'g': strcpy(nomeEstado, "Granaluz"); break;
+        case 'H': case 'h': strcpy(nomeEstado, "Horizônia"); break;
+        default: strcpy(nomeEstado, "Desconhecido"); break;
+    }
 }
 
-// Função para calcular PIB per capita
-float calcular_pib_per_capita(double pib, unsigned long int pop) {
-    return pib / pop;
+// Função para obter nome da cidade pelo estado e número
+void getNomeCidade(char estado, int numCidade, char *nomeCidade) {
+    switch (estado) {
+        case 'A': case 'a':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Solária"); break;
+                case 2: strcpy(nomeCidade, "Ventúria"); break;
+                case 3: strcpy(nomeCidade, "Lunária"); break;
+                case 4: strcpy(nomeCidade, "Bravona"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'B': case 'b':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Invernia"); break;
+                case 2: strcpy(nomeCidade, "Nevaluz"); break;
+                case 3: strcpy(nomeCidade, "Ártica"); break;
+                case 4: strcpy(nomeCidade, "Gelária"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'C': case 'c':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Melódia"); break;
+                case 2: strcpy(nomeCidade, "Harmonia"); break;
+                case 3: strcpy(nomeCidade, "Rítmica"); break;
+                case 4: strcpy(nomeCidade, "Coralina"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'D': case 'd':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Montávia"); break;
+                case 2: strcpy(nomeCidade, "Pedrúnia"); break;
+                case 3: strcpy(nomeCidade, "Rochaluz"); break;
+                case 4: strcpy(nomeCidade, "Valedouro"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'E': case 'e':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Luminara"); break;
+                case 2: strcpy(nomeCidade, "Brilúnia"); break;
+                case 3: strcpy(nomeCidade, "Noctúria"); break;
+                case 4: strcpy(nomeCidade, "Claravida"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'F': case 'f':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Rosávia"); break;
+                case 2: strcpy(nomeCidade, "Jardoluz"); break;
+                case 3: strcpy(nomeCidade, "Primavela"); break;
+                case 4: strcpy(nomeCidade, "Botânia"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'G': case 'g':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Verdelago"); break;
+                case 2: strcpy(nomeCidade, "Campoleiro"); break;
+                case 3: strcpy(nomeCidade, "Pastália"); break;
+                case 4: strcpy(nomeCidade, "Plantávia"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        case 'H': case 'h':
+            switch (numCidade) {
+                case 1: strcpy(nomeCidade, "Solnascente"); break;
+                case 2: strcpy(nomeCidade, "Claravento"); break;
+                case 3: strcpy(nomeCidade, "Alvoraluz"); break;
+                case 4: strcpy(nomeCidade, "Céudouro"); break;
+                default: strcpy(nomeCidade, "Desconhecida"); break;
+            }
+            break;
+        default:
+            strcpy(nomeCidade, "Desconhecida");
+            break;
+    }
 }
 
-// Função para calcular super poder
-float calcular_super_poder(Carta c) {
-    float inverso_densidade = 1.0f / c.densidade_populacional;
-    return (float)c.populacao + c.area + (float)c.pib + c.pontos_turisticos + c.pib_per_capita + inverso_densidade;
-}
-
-// Função para comparar e exibir os resultados
-void comparar_e_exibir(Carta c1, Carta c2) {
-    printf("\nComparação de Cartas:\n");
-
-    printf("População: Carta 1 venceu (%d)\n", c1.populacao > c2.populacao);
-    printf("Área: Carta 1 venceu (%d)\n", c1.area > c2.area);
-    printf("PIB: Carta 1 venceu (%d)\n", c1.pib > c2.pib);
-    printf("Pontos Turísticos: Carta 1 venceu (%d)\n", c1.pontos_turisticos > c2.pontos_turisticos);
-    printf("Densidade Populacional: Carta 1 venceu (%d)\n", c1.densidade_populacional < c2.densidade_populacional); // menor vence
-    printf("PIB per Capita: Carta 1 venceu (%d)\n", c1.pib_per_capita > c2.pib_per_capita);
-    printf("Super Poder: Carta 1 venceu (%d)\n", c1.super_poder > c2.super_poder);
+void exibirCarta(Carta c) {
+    printf("Código da Carta: %s\n", c.codigo);
+    printf("Estado: %s (%c)\n", c.nomeEstado, c.estado);
+    printf("Cidade: %s (%d)\n", c.nomeCidade, c.numeroCidade);
+    printf("População: %d habitantes\n", c.populacao);
+    printf("Área: %.2f km²\n", c.area);
+    printf("PIB: R$ %.2f bilhões\n", c.pib);
+    printf("Pontos Turísticos: %d\n", c.pontosTuristicos);
+    printf("---------------------------------\n");
 }
 
 int main() {
-    Carta c1, c2;
+    Carta cartas[MAX_CARTAS];
+    int total = 0;
+    char continuar;
 
-    printf("Digite os dados da Carta 1:\n");
-    printf("Estado: ");
-    scanf(" %[^\n]", c1.estado);
-    printf("Código: ");
-    scanf("%d", &c1.codigo);
-    printf("Nome: ");
-    scanf(" %[^\n]", c1.nome);
-    printf("População: ");
-    scanf("%lu", &c1.populacao);
-    printf("Área: ");
-    scanf("%f", &c1.area);
-    printf("PIB: ");
-    scanf("%lf", &c1.pib);
-    printf("Pontos Turísticos: ");
-    scanf("%d", &c1.pontos_turisticos);
+    printf("=== Cadastro de Cidades - Super Trunfo: Países ===\n");
 
-    c1.densidade_populacional = calcular_densidade(c1.populacao, c1.area);
-    c1.pib_per_capita = calcular_pib_per_capita(c1.pib, c1.populacao);
-    c1.super_poder = calcular_super_poder(c1);
+    do {
+        if (total >= MAX_CARTAS) {
+            printf("Limite máximo de cartas atingido!\n");
+            break;
+        }
 
-    printf("\nDigite os dados da Carta 2:\n");
-    printf("Estado: ");
-    scanf(" %[^\n]", c2.estado);
-    printf("Código: ");
-    scanf("%d", &c2.codigo);
-    printf("Nome: ");
-    scanf(" %[^\n]", c2.nome);
-    printf("População: ");
-    scanf("%lu", &c2.populacao);
-    printf("Área: ");
-    scanf("%f", &c2.area);
-    printf("PIB: ");
-    scanf("%lf", &c2.pib);
-    printf("Pontos Turísticos: ");
-    scanf("%d", &c2.pontos_turisticos);
+        printf("\n--- Carta %d ---\n", total + 1);
+        printf("Informe o Estado (A-H): ");
+        scanf(" %c", &cartas[total].estado);
 
-    c2.densidade_populacional = calcular_densidade(c2.populacao, c2.area);
-    c2.pib_per_capita = calcular_pib_per_capita(c2.pib, c2.populacao);
-    c2.super_poder = calcular_super_poder(c2);
+        printf("Informe o número da cidade (1-4): ");
+        scanf("%d", &cartas[total].numeroCidade);
 
-    comparar_e_exibir(c1, c2);
+        // Gerar código da carta
+        snprintf(cartas[total].codigo, sizeof(cartas[total].codigo), "%c%02d", cartas[total].estado, cartas[total].numeroCidade);
+
+        // Obter nomes
+        getNomeEstado(cartas[total].estado, cartas[total].nomeEstado);
+        getNomeCidade(cartas[total].estado, cartas[total].numeroCidade, cartas[total].nomeCidade);
+
+        printf("População: ");
+        scanf("%d", &cartas[total].populacao);
+
+        printf("Área (em km²): ");
+        scanf("%f", &cartas[total].area);
+
+        printf("PIB (em bilhões de R$): ");
+        scanf("%f", &cartas[total].pib);
+
+        printf("Número de pontos turísticos: ");
+        scanf("%d", &cartas[total].pontosTuristicos);
+
+        total++;
+
+        printf("Deseja cadastrar outra carta? (S/N): ");
+        scanf(" %c", &continuar);
+
+    } while (continuar == 'S' || continuar == 's');
+
+    printf("\n=== Cartas Cadastradas ===\n");
+    for (int i = 0; i < total; i++) {
+        exibirCarta(cartas[i]);
+    }
 
     return 0;
 }
