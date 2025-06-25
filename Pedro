@@ -1,0 +1,40 @@
+// Definição dos pinos
+const int fimCursoAbrir = 2;      // Fim de curso - porta aberta
+const int fimCursoFechar = 3;     // Fim de curso - porta recolhida
+const int sensorIR = 4;           // Sensor infravermelho
+const int releContator = 5;       // Relé que ativa o contator
+
+void setup() {
+  // Configuração dos pinos
+  pinMode(fimCursoAbrir, INPUT_PULLUP);
+  pinMode(fimCursoFechar, INPUT_PULLUP);
+  pinMode(sensorIR, INPUT_PULLUP);
+  pinMode(releContator, OUTPUT);
+
+  // Estado inicial: relé desligado (normalmente HIGH)
+  digitalWrite(releContator, HIGH);
+
+  // Inicializa a comunicação serial (opcional para monitoramento)
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Leitura dos sensores
+  bool portaAberta = digitalRead(fimCursoAbrir) == LOW;    // Ativo quando pressionado
+  bool portaFechada = digitalRead(fimCursoFechar) == LOW;  // Ativo quando pressionado
+  bool objetoDetectado = digitalRead(sensorIR) == LOW;     // Ativo quando LOW
+
+  // Aqui a lógica para inverter o estado do pino 4 no pino 5 (IN1)
+  if (digitalRead(sensorIR) == LOW) {   // pino 4 == 0
+    digitalWrite(releContator, HIGH);   // pino 5 = 1
+  } else {
+    digitalWrite(releContator, LOW);    // pino 5 = 0
+  }
+
+  // Opcionalmente, manter o monitor serial:
+  if (objetoDetectado) {
+    Serial.println("Objeto detectado - IN1 acionado");
+  } else {
+    Serial.println("Sensor IR desligado - IN1 desligado");
+  }
+}
